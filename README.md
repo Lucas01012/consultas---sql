@@ -12,9 +12,6 @@ Este repositório contém scripts SQL para criação, carregamento e análise de
 - [Carregamento dos Dados](#-carregamento-dos-dados)
 - [Consultas SQL](#-consultas-sql)
 - [Requisitos](#-requisitos)
-- [Melhorias Futuras](#-melhorias-futuras)
-- [Contribuição](#-contribuição)
-
 ---
 
 ## 🎯 Objetivo
