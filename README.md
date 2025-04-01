@@ -1,19 +1,37 @@
-# consultas---sql
+# 📊 Análise de Despesas das Operadoras de Saúde
 
-📊 Análise de Despesas das Operadoras de Saúde
-Este repositório contém scripts SQL para criação, carregamento e análise de dados financeiros de operadoras de saúde no Brasil. Os dados incluem despesas com sinistros/eventos e são extraídos de demonstrações contábeis das operadoras registradas na ANS (Agência Nacional de Saúde Suplementar).
+![MySQL](https://img.shields.io/badge/MySQL-Database-blue) ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
 
-🚀 Objetivo
-Analisar as despesas das operadoras de saúde com sinistros conhecidos ou avisados ao longo do tempo, permitindo insights sobre os gastos no último trimestre e no último ano.
+Este repositório contém scripts SQL para criação, carregamento e análise de dados financeiros de operadoras de saúde no Brasil. Os dados incluem despesas com **sinistros/eventos** extraídos de demonstrações contábeis das operadoras registradas na **ANS (Agência Nacional de Saúde Suplementar)**.
 
-🗄️ Estrutura do Banco de Dados
-O banco de dados dados_operadoras possui duas tabelas principais:
+---
 
-1️⃣ Tabela operadoras_ativas
+## 📌 Tabela de Conteúdo
+- [Objetivo](#-objetivo)
+- [Banco de Dados](#-banco-de-dados)
+- [Carregamento dos Dados](#-carregamento-dos-dados)
+- [Consultas SQL](#-consultas-sql)
+- [Requisitos](#-requisitos)
+- [Melhorias Futuras](#-melhorias-futuras)
+- [Contribuição](#-contribuição)
+
+---
+
+## 🎯 Objetivo
+Este projeto tem como objetivo analisar as despesas das operadoras de saúde com **sinistros conhecidos ou avisados** ao longo do tempo. Isso permite insights sobre os gastos no **último trimestre** e no **último ano**.
+
+---
+
+## 🗄️ Banco de Dados
+
+### **Criação do Banco de Dados**
+```sql
+CREATE DATABASE dados_operadoras;
+```
+
+### **1️⃣ Tabela `operadoras_ativas`**
 Contém informações cadastrais das operadoras de saúde registradas na ANS.
-
-sql
-Copiar
+```sql
 CREATE TABLE operadoras_ativas (
     Registro_ANS VARCHAR(255),
     CNPJ VARCHAR(255),
@@ -36,11 +54,11 @@ CREATE TABLE operadoras_ativas (
     Regiao_de_Comercializacao VARCHAR(255),
     Data_Registro_ANS DATE
 );
-2️⃣ Tabela demonstracoes_contabeis
-Armazena informações financeiras das operadoras, incluindo despesas com sinistros/eventos.
+```
 
-sql
-Copiar
+### **2️⃣ Tabela `demonstracoes_contabeis`**
+Armazena informações financeiras das operadoras, incluindo despesas com **sinistros/eventos**.
+```sql
 CREATE TABLE demonstracoes_contabeis (
     DATA DATE,
     REG_ANS VARCHAR(255),
@@ -49,11 +67,14 @@ CREATE TABLE demonstracoes_contabeis (
     VL_SALDO_INICIAL DECIMAL(18, 2),
     VL_SALDO_FINAL DECIMAL(18, 2)
 );
-📥 Carregamento dos Dados
-Os dados são carregados via LOAD DATA INFILE diretamente de arquivos .csv.
+```
 
-sql
-Copiar
+---
+
+## 📥 Carregamento dos Dados
+Os dados são carregados via `LOAD DATA INFILE` diretamente de arquivos `.csv`.
+
+```sql
 LOAD DATA LOCAL INFILE 'C:\\Users\\Lucas\\Desktop\\querys\\Dados Cadastrais Operadoras\\Relatorio_cadop.csv'
 INTO TABLE operadoras_ativas
 CHARACTER SET utf8
@@ -61,8 +82,9 @@ FIELDS TERMINATED BY ';'
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES;
-sql
-Copiar
+```
+
+```sql
 LOAD DATA LOCAL INFILE 'C:\\Users\\Lucas\\Desktop\\querys\\Demonstracoes Contabeis\\2024\\4T2024.csv'
 INTO TABLE demonstracoes_contabeis
 CHARACTER SET utf8
@@ -70,48 +92,75 @@ FIELDS TERMINATED BY ';'
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES;
-📊 Consultas SQL para Análises
-🔹 Top 10 Operadoras com Maiores Despesas em Sinistros no Último Trimestre
-sql
-Copiar
-SELECT 
+```
+
+---
+
+## 📊 Consultas SQL
+
+### 🔹 **Top 10 Operadoras com Maiores Despesas em Sinistros no Último Trimestre**
+```sql
+SELECT
     OA.RAZAO_SOCIAL,
     SUM(COALESCE(DC.VL_SALDO_FINAL, 0)) AS Total_Despesas
-FROM 
+FROM
     DEMONSTRACOES_CONTABEIS DC
-INNER JOIN 
-    OPERADORAS_ATIVAS OA 
+INNER JOIN
+    OPERADORAS_ATIVAS OA
     ON DC.REG_ANS = OA.REGISTRO_ANS
-WHERE 
+WHERE
     DC.DESCRICAO LIKE '%SINISTROS%'
     AND DC.DATA = (SELECT MAX(DATA) FROM DEMONSTRACOES_CONTABEIS)  -- Último trimestre disponível
-GROUP BY 
+GROUP BY
     OA.RAZAO_SOCIAL
-ORDER BY 
+ORDER BY
     Total_Despesas DESC
 LIMIT 10;
-🔹 Top 10 Operadoras com Maiores Despesas em Sinistros no Último Ano
-sql
-Copiar
-SELECT 
+```
+
+### 🔹 **Top 10 Operadoras com Maiores Despesas em Sinistros no Último Ano**
+```sql
+SELECT
     OA.RAZAO_SOCIAL,
     SUM(COALESCE(DC.VL_SALDO_FINAL, 0)) AS Total_Despesas
-FROM 
+FROM
     DEMONSTRACOES_CONTABEIS DC
-INNER JOIN 
-    OPERADORAS_ATIVAS OA 
+INNER JOIN
+    OPERADORAS_ATIVAS OA
     ON DC.REG_ANS = OA.REGISTRO_ANS
-WHERE 
+WHERE
     DC.DESCRICAO LIKE '%SINISTROS%'
     AND DC.DATA BETWEEN '2024-01-01' AND (SELECT MAX(DATA) FROM DEMONSTRACOES_CONTABEIS)
-GROUP BY 
+GROUP BY
     OA.RAZAO_SOCIAL
-ORDER BY 
+ORDER BY
     Total_Despesas DESC
 LIMIT 10;
-📌 Requisitos
-Banco de Dados: MySQL
+```
 
-Arquivos CSV: Devem estar corretamente formatados com separação por ;
+---
+
+## 📌 Requisitos
+- **Banco de Dados:** MySQL
+- **Arquivos CSV:** Devem estar corretamente formatados com separação por `;`
+- **Permissão para `LOAD DATA LOCAL INFILE`** no MySQL
+
+---
+
+## ✨ Melhorias Futuras
+🔹 Criar visualizações gráficas das despesas por trimestre 📊  
+🔹 Comparar as despesas entre diferentes anos 📆  
+🔹 Implementar uma API para consultas dinâmicas 💻  
+
+---
+
+## 📩 Contribuição
+Se quiser contribuir com melhorias ou sugestões, fique à vontade para abrir uma **issue** ou enviar um **pull request**. 🚀
+
+---
+
+Feito com 💙 por Lucas.
+
+
 
 Permissão para LOAD DATA LOCAL INFILE no MySQL
