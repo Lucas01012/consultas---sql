@@ -140,27 +140,5 @@ LIMIT 10;
 
 ---
 
-## 📌 Requisitos
-- **Banco de Dados:** MySQL
-- **Arquivos CSV:** Devem estar corretamente formatados com separação por `;`
-- **Permissão para `LOAD DATA LOCAL INFILE`** no MySQL
-
----
-
-## ✨ Melhorias Futuras
-🔹 Criar visualizações gráficas das despesas por trimestre 📊  
-🔹 Comparar as despesas entre diferentes anos 📆  
-🔹 Implementar uma API para consultas dinâmicas 💻  
-
----
-
-## 📩 Contribuição
-Se quiser contribuir com melhorias ou sugestões, fique à vontade para abrir uma **issue** ou enviar um **pull request**. 🚀
-
----
 
 Feito com 💙 por Lucas.
-
-
-
-Permissão para LOAD DATA LOCAL INFILE no MySQL
